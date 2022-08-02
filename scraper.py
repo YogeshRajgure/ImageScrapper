@@ -5,7 +5,7 @@ from selenium import webdriver
 
 
 
-def fetch_image_urls(query: str, max_links_to_fetch: int, wd: webdriver, sleep_between_interactions: int = 1):
+def fetch_image_urls(query: str, max_links_to_fetch: int, wd: webdriver, sleep_between_interactions: int = 1.5):
     def scroll_to_end(wd):
         wd.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(sleep_between_interactions)
@@ -50,11 +50,14 @@ def fetch_image_urls(query: str, max_links_to_fetch: int, wd: webdriver, sleep_b
                 break
         else:
             print("Found:", len(image_urls), "image links, looking for more ...")
-            time.sleep(30)
-            return
-            load_more_button = wd.find_element_by_css_selector(".mye4qd")
-            if load_more_button:
-                wd.execute_script("document.querySelector('.mye4qd').click();")
+            time.sleep(10)
+            #return
+            try:
+                load_more_button = wd.find_element_by_css_selector(".mye4qd")
+                if load_more_button:
+                    wd.execute_script("document.querySelector('.mye4qd').click();")
+            except:
+                pass
 
         # move the result startpoint further down
         results_start = len(thumbnail_results)
@@ -62,7 +65,7 @@ def fetch_image_urls(query: str, max_links_to_fetch: int, wd: webdriver, sleep_b
     return image_urls
 
 
-def persist_image(folder_path:str,url:str, counter):
+def persist_image(folder_path: str, url: str, counter):
     try:
         image_content = requests.get(url).content
 
@@ -107,9 +110,9 @@ DRIVER_PATH = './chromedriver.exe'  # .exe only because we are on windows
 
 # if __name__ == "__main__":
 search_term = input("Which photos to search ? >")
+num_images = int(input("Number of images -> "))
 # num of images you can pass it from here  by default it's 10 if you are not passing
-# number_images = 10
-search_and_download(search_term=search_term, driver_path=DRIVER_PATH)
+search_and_download(search_term=search_term, driver_path=DRIVER_PATH, number_images=num_images)
 
 
 # while downloading all the dependencies if u get any error for "pip install -r requirements.txt"
